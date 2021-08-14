@@ -1,0 +1,14 @@
+{
+  "name": "furniture-02",
+  "version": "1.0.0",
+  "description": "Furniture store and Shopping online",
+  "main": "index.js",
+  "scripts": {
+    "server": "npm run dev --prefix backend",
+    "client": "npm start --prefix fontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "keywords": [],
+  "author": "Kraipon Najaroon",
+  "license": "ISC"
+}
