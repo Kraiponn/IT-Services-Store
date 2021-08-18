@@ -32,6 +32,7 @@ const userSchema = new mongoose.Schema(
       default: "User",
     },
     credentials: {
+      image: String,
       phone: {
         mobile: String,
         office: String,
@@ -40,7 +41,7 @@ const userSchema = new mongoose.Schema(
         type: String,
         maxLength: 250,
       },
-      ege: {
+      age: {
         type: Number,
       },
     },
@@ -75,7 +76,7 @@ userSchema.methods.getSignJwtToken = function () {
     {
       id: this._id,
     },
-    process.env.JWT_SECRET,
+    process.env.JWT_SECRET_KEY,
     {
       expiresIn: process.env.JWT_EXPIRE,
     }
@@ -83,20 +84,20 @@ userSchema.methods.getSignJwtToken = function () {
 };
 
 // Generate reset token id for reset password
-userSchema.methods.resetPasswordToken = function () {
+userSchema.methods.getResetPasswordToken = function () {
   // Token Id
-  const resetToken = crypto.randomBytes(20).toString("hex");
+  const tokenId = crypto.randomBytes(20).toString("hex");
 
   // Hashed reset token and save to resetPasswordToken field
   this.resetPasswordToken = crypto
     .createHash("sha256")
-    .update(resetToken)
+    .update(tokenId)
     .digest("hex");
 
   // Set expired time to reset token and save to resetPasswordExpire field
   this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
 
-  return resetToken;
+  return tokenId;
 };
 
 module.exports = mongoose.model("User", userSchema);
