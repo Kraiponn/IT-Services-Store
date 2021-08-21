@@ -32,7 +32,6 @@ const userSchema = new mongoose.Schema(
       default: "User",
     },
     credentials: {
-      image: String,
       phone: {
         mobile: String,
         office: String,
@@ -44,6 +43,10 @@ const userSchema = new mongoose.Schema(
       age: {
         type: Number,
       },
+    },
+    image: {
+      public_id: String,
+      secure_url: String,
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,

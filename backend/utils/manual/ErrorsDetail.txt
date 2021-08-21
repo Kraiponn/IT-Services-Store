@@ -1,0 +1,33 @@
+
+/***************************************************/
+                 UPLOAD FILE
+MulterError: File too large => File over size
+
+/***************************************************/
+
+CastError: Cast to ObjectId failed for value "611faaca8dc6cc6bc4e7185b2" (type string) at path "_id" for model "Category"
+    at model.Query.exec (D:\MyWork\Projects\Web\FullStack\WorkShop 2021\furniture-02\backend\node_modules\mongoose\lib\query.js:4498:21)
+    at model.Query.Query.then (D:\MyWork\Projects\Web\FullStack\WorkShop 2021\furniture-02\backend\node_modules\mongoose\lib\query.js:4592:15)
+    at processTicksAndRejections (internal/process/task_queues.js:93:5) {
+  messageFormat: undefined,
+  stringValue: '"611faaca8dc6cc6bc4e7185b2"',
+  kind: 'ObjectId',
+  value: '611faaca8dc6cc6bc4e7185b2',
+  path: '_id',
+  reason: Error: Argument passed in must be a single String of 12 bytes or a string of 24 hex characters
+      at new ObjectID (D:\MyWork\Projects\Web\FullStack\WorkShop 2021\furniture-02\backend\node_modules\bson\lib\bson\objectid.js:59:11)
+      at castObjectId (D:\MyWork\Projects\Web\FullStack\WorkShop 2021\furniture-02\backend\node_modules\mongoose\lib\cast\objectid.js:25:12)
+      at ObjectId.cast (D:\MyWork\Projects\Web\FullStack\WorkShop 2021\furniture-02\backend\node_modules\mongoose\lib\schema\objectid.js:246:12)
+      at ObjectId.SchemaType.applySetters (D:\MyWork\Projects\Web\FullStack\WorkShop 2021\furniture-02\backend\node_modules\mongoose\lib\schematype.js:1123:12)
+      at ObjectId.SchemaType._castForQuery (D:\MyWork\Projects\Web\FullStack\WorkShop 2021\furniture-02\backend\node_modules\mongoose\lib\schematype.js:1601:15)
+      at ObjectId.SchemaType.castForQuery (D:\MyWork\Projects\Web\FullStack\WorkShop 2021\furniture-02\backend\node_modules\mongoose\lib\schematype.js:1591:15)
+      at ObjectId.SchemaType.castForQueryWrapper (D:\MyWork\Projects\Web\FullStack\WorkShop 2021\furniture-02\backend\node_modules\mongoose\lib\schematype.js:1568:20)
+      at cast (D:\MyWork\Projects\Web\FullStack\WorkShop 2021\furniture-02\backend\node_modules\mongoose\lib\cast.js:332:32)        
+      at model.Query.Query.cast (D:\MyWork\Projects\Web\FullStack\WorkShop 2021\furniture-02\backend\node_modules\mongoose\lib\query.js:4937:12)
+      at model.Query.Query._castConditions (D:\MyWork\Projects\Web\FullStack\WorkShop 2021\furniture-02\backend\node_modules\mongoose\lib\query.js:1975:10)
+      at model.Query.<anonymous> (D:\MyWork\Projects\Web\FullStack\WorkShop 2021\furniture-02\backend\node_modules\mongoose\lib\query.js:2232:8)
+      at model.Query._wrappedThunk [as _findOne] (D:\MyWork\Projects\Web\FullStack\WorkShop 2021\furniture-02\backend\node_modules\mongoose\lib\helpers\query\wrapThunk.js:16:8)
+      at D:\MyWork\Projects\Web\FullStack\WorkShop 2021\furniture-02\backend\node_modules\kareem\index.js:370:33
+      at processTicksAndRejections (internal/process/task_queues.js:75:11),
+  valueType: 'string'
+}

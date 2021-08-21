@@ -1,20 +1,23 @@
-const path = require("path");
 const crypto = require("crypto");
-const fsExtra = require("fs-extra");
 const asyncHanler = require("express-async-handler");
 const { validationResult } = require("express-validator");
+
 const ErrorResponse = require("../utils/ErrorResponse");
-const checkResults = require("../utils/validationBody/bodyValidateResult");
-const sendResponseWithToken = require("../utils/sendTokenResponse");
+const {
+  validateBodyResults,
+} = require("../utils/validationBody/validateResults");
+
+const sendResponseWithToken = require("../services/sendTokenResponse");
+const sendEmail = require("../services/sendEmail");
+const { cloudinary } = require("../utils/configs/fileUploadConfig");
 const User = require("../models/User");
-const sendEmail = require("../utils/sendEmail");
 
 // @desc    Create new user
 // @route   POST /api/v2021/auth/register
 // @access  Public
 exports.register = asyncHanler(async (req, res, next) => {
   const error = validationResult(req);
-  checkResults(error);
+  validateBodyResults(error);
 
   const user = await User.create(req.body);
 
@@ -27,7 +30,7 @@ exports.register = asyncHanler(async (req, res, next) => {
   res.status(201).json({
     success: true,
     data: {
-      message: "New user created successfully",
+      message: "Created new user is successfully",
     },
   });
 });
@@ -37,7 +40,7 @@ exports.register = asyncHanler(async (req, res, next) => {
 // @access  Public
 exports.login = asyncHanler(async (req, res, next) => {
   const error = validationResult(req);
-  checkResults(error);
+  validateBodyResults(error);
 
   const user = await User.findOne({ email: req.body.email }).select(
     "+password"
@@ -62,7 +65,7 @@ exports.login = asyncHanler(async (req, res, next) => {
 
 // @desc    Get user profile
 // @route   GET /api/v2021/auth/:uerId
-// @access  Private
+// @access  Public
 exports.getProfile = asyncHanler(async (req, res, next) => {
   const user = await User.findById(req.user._id);
   if (!user) {
@@ -83,7 +86,13 @@ exports.getProfile = asyncHanler(async (req, res, next) => {
 // @route   PUT /api/v2021/auth/updateprofile
 // @access  Private
 exports.updateProfile = asyncHanler(async (req, res, next) => {
+  const error = validationResult(req);
+  validateBodyResults(error);
+
+  // console.log("body", req.body);
+
   const user = await User.findById(req.user._id);
+
   if (!user) {
     return next(
       new ErrorResponse(`User not found with id of ${req.user._id}`, 404)
@@ -91,71 +100,31 @@ exports.updateProfile = asyncHanler(async (req, res, next) => {
   }
 
   const { username, email, mobile, office, address, age } = req.body;
-  // console.log(req.body);
 
   user.username = username ? username : user.username;
   user.email = email ? email : user.email;
-
-  user.credentials.phone = {
-    mobile: mobile ? mobile : "",
-    office: office ? office : "",
+  user.credentials = {
+    phone: {
+      mobile: mobile ? mobile : "",
+      office: office ? mobile : "",
+    },
+    address: address ? address : "",
+    age: age ? parseInt(age) : 0,
   };
-  user.credentials.address = address ? address : "";
-  user.credentials.age = age ? parseInt(age) : 0;
 
-  if (req.files) {
-    // console.log("Uploaded: ", req.files.avatar);
-    const file = req.files.avatar;
-
-    // Make type of a file to upload is an image
-    if (!file.mimetype.startsWith("image/")) {
-      return next(
-        new ErrorResponse(
-          `Please upload an image with (.jpg|.jpeg|.png|.gif) type`,
-          400
-        )
-      );
+  if (req.file) {
+    // Remove old image on cloudinary
+    if (user.image.public_id) {
+      await cloudinary.uploader.destroy(user.image.public_id);
     }
 
-    const limitfileSize = process.env.FILE_UPLOAD_LIMIT_SIZE;
+    // Update new image to cloudinary
+    const newUploadResult = await cloudinary.uploader.upload(req.file.path);
 
-    // Limit size with 1.5Mb
-    if (file.size > limitfileSize) {
-      return next(
-        new ErrorResponse(
-          `Please upload an image less than ${limitfileSize} byte`,
-          400
-        )
-      );
-    }
-
-    // Create custom file name
-    file.name = `${Date.now()}-${user._id}${path.parse(file.name).ext}`;
-    const uploadPath = `${process.env.FILE_UPLOAD_PROFILE_PATH}/${file.name}`;
-
-    // Remove old image from server. If exists.
-    if (
-      await fsExtra.pathExists(
-        `${process.env.IMAGE_REMOVE_PATH}/${user.credentials.image}`
-      )
-    ) {
-      fsExtra.remove(
-        `${process.env.IMAGE_REMOVE_PATH}/${user.credentials.image}`
-      );
-
-      // console.log("Old avarar remove...".red.underline.bold);
-    }
-
-    file.mv(uploadPath, function (err) {
-      if (err) {
-        return next(new ErrorResponse("file error", 500));
-      }
-    });
-
-    // user.credentials.image = `${req.protocol}://${req.get(
-    //   "host"
-    // )}/uploads/profiles/${file.name}`;
-    user.credentials.image = `${process.env.PROFILE_IMAGE_DB_PATH}/${file.name}`;
+    user.image = {
+      public_id: newUploadResult.public_id,
+      secure_url: newUploadResult.secure_url,
+    };
   }
 
   // Update new data to db
@@ -164,7 +133,7 @@ exports.updateProfile = asyncHanler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: {
-      message: "Profile updated successfully",
+      message: "Profile updated is successfully",
       user,
     },
   });
@@ -175,7 +144,7 @@ exports.updateProfile = asyncHanler(async (req, res, next) => {
 // @access  Private
 exports.updatePassword = asyncHanler(async (req, res, next) => {
   const error = validationResult(req);
-  checkResults(error);
+  validateBodyResults(error);
 
   const user = await User.findById(req.user._id).select("+password");
   if (!user) {
@@ -186,7 +155,7 @@ exports.updatePassword = asyncHanler(async (req, res, next) => {
 
   const matchPwd = await user.comparedPassword(req.body.currentPassword);
   if (!matchPwd) {
-    return next(new ErrorResponse(`Password is incollect`, 400));
+    return next(new ErrorResponse(`Your current password is incollect`, 400));
   }
 
   user.password = req.body.newPassword;
@@ -202,7 +171,7 @@ exports.updatePassword = asyncHanler(async (req, res, next) => {
 // @access  Public
 exports.forgotPassword = asyncHanler(async (req, res, next) => {
   const error = validationResult(req);
-  checkResults(error);
+  validateBodyResults(error);
 
   const user = await User.findOne({ email: req.body.email });
 
@@ -263,7 +232,7 @@ exports.forgotPassword = asyncHanler(async (req, res, next) => {
 // @access  Private
 exports.resetPassword = asyncHanler(async (req, res, next) => {
   const error = validationResult(req);
-  checkResults(error);
+  validateBodyResults(error);
 
   // Generate reset token id
   const resetPasswordToken = crypto
@@ -294,14 +263,11 @@ exports.resetPassword = asyncHanler(async (req, res, next) => {
 // @route   POST /api/v2021/auth/removedaccount
 // @access  Private
 exports.removedAccount = asyncHanler(async (req, res, next) => {
-  const user = await User.findByIdAndDelete(req.user._id);
+  const user = await User.findById(req.user._id);
 
   if (!user) {
     return next(
-      new ErrorResponse(
-        `Can not remove this account. Because, User not found.`,
-        401
-      )
+      new ErrorResponse(`There is no user with id of ${req.user._id}`, 404)
     );
   }
 

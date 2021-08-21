@@ -1,13 +1,13 @@
 const { body } = require("express-validator");
 const ErrorResponse = require("../ErrorResponse");
 
-const regisBody = [
+const isValidateRegisInput = [
   body("username").notEmpty().withMessage("Please provide a username"),
   body("email")
     .notEmpty()
     .withMessage("Please provide an email")
     .isEmail()
-    .withMessage("Please add a valid type of email"),
+    .withMessage("Please add a valid email"),
   body("password")
     .notEmpty()
     .withMessage("Please provide a password")
@@ -28,12 +28,12 @@ const regisBody = [
     }),
 ];
 
-const loginBody = [
+const isValidateLoginInput = [
   body("email")
     .notEmpty()
     .withMessage("Please provide an email")
     .isEmail()
-    .withMessage("Please add a valid type of email"),
+    .withMessage("Please add a valid email"),
   body("password")
     .notEmpty()
     .withMessage("Please provide a password")
@@ -41,7 +41,7 @@ const loginBody = [
     .withMessage("Password must be between 6 and 18 characters"),
 ];
 
-const updatePwdBody = [
+const isValidateUpdatePwdInput = [
   body("currentPassword")
     .notEmpty()
     .withMessage("Please provide a current password")
@@ -54,15 +54,24 @@ const updatePwdBody = [
     .withMessage("New password must be between 6 and 18 characters"),
 ];
 
-const forgotPwdBody = [
+const isValidateProfileInput = [
+  body("username").notEmpty().withMessage("Please provide a username"),
   body("email")
     .notEmpty()
     .withMessage("Please provide an email")
     .isEmail()
-    .withMessage("Please add a valid type of email"),
+    .withMessage("Please add a valid email"),
 ];
 
-const resetPwdBody = [
+const isValidateForgotPwdInput = [
+  body("email")
+    .notEmpty()
+    .withMessage("Please provide an email")
+    .isEmail()
+    .withMessage("Please add a valid email"),
+];
+
+const isValidateResetPwdInput = [
   body("password")
     .notEmpty()
     .withMessage("Please provide a password")
@@ -84,9 +93,10 @@ const resetPwdBody = [
 ];
 
 module.exports = {
-  regisBody,
-  loginBody,
-  updatePwdBody,
-  forgotPwdBody,
-  resetPwdBody,
+  isValidateRegisInput,
+  isValidateLoginInput,
+  isValidateUpdatePwdInput,
+  isValidateProfileInput,
+  isValidateForgotPwdInput,
+  isValidateResetPwdInput,
 };

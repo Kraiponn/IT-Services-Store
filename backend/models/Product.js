@@ -17,8 +17,8 @@ const productSchema = new mongoose.Schema({
     mixLength: [255, "Description must be long than 255 characters"],
   },
   image: {
-    type: String,
-    default: "nopic.jpg",
+    public_id: String,
+    secure_url: String,
   },
   price: {
     type: Number,
@@ -26,7 +26,7 @@ const productSchema = new mongoose.Schema({
   },
   instock: {
     type: Number,
-    default: 0,
+    required: [true, "Please add a product in stock"],
   },
   evgRating: {
     type: Number,

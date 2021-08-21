@@ -3,6 +3,7 @@ const errorHandler = (err, req, res, next) => {
 
   // Debug error
   console.log(err);
+  console.log("Error.name:".red.bold, err.name);
 
   error.message = err.message;
   error.statusCode = err.statusCode;
@@ -12,6 +13,21 @@ const errorHandler = (err, req, res, next) => {
     error.statusCode = 422;
     error.type = "Invalid validation";
     error.message = err.errorObj;
+  }
+
+  // Mongoose validation error
+  if (err.name === "ValidationError") {
+    const message = Object.values(err.errors).map((val) => val.message);
+    error.statusCode = 400;
+    error.type = "Invalid validation";
+    error.message = message;
+  }
+
+  // Mongoose bad ObjectId
+  if (err.name === "CastError") {
+    error.statusCode = 400;
+    error.type = "Resource Not Found";
+    error.message = `ObjectId not found or Invalid type`;
   }
 
   // Duplicate field value

@@ -9,30 +9,39 @@ const {
   resetPassword,
   removedAccount,
 } = require("../controllers/auth.js");
-const { isAuth } = require("../middlewares/authorize");
 const {
-  regisBody,
-  loginBody,
-  updatePwdBody,
-  forgotPwdBody,
-  resetPwdBody,
+  isValidateRegisInput,
+  isValidateLoginInput,
+  isValidateUpdatePwdInput,
+  isValidateProfileInput,
+  isValidateForgotPwdInput,
+  isValidateResetPwdInput,
 } = require("../utils/validationBody/auth");
+
+const { uploader } = require("../utils/configs/fileUploadConfig");
+const { isAuth } = require("../middlewares/authorize");
 
 const router = express.Router();
 
-router.post("/register", regisBody, register);
+router.post("/register", isValidateRegisInput, register);
 
-router.post("/login", loginBody, login);
+router.post("/login", isValidateLoginInput, login);
 
 router.get("/:userId", isAuth, getProfile);
 
-router.put("/updateprofile", isAuth, updateProfile);
+router.put(
+  "/updateprofile",
+  uploader.single("avatar"),
+  isValidateProfileInput,
+  isAuth,
+  updateProfile
+);
 
-router.put("/updatepassword", isAuth, updatePwdBody, updatePassword);
+router.put("/updatepassword", isValidateUpdatePwdInput, isAuth, updatePassword);
 
-router.post("/forgotpassword", forgotPwdBody, forgotPassword);
+router.post("/forgotpassword", isValidateForgotPwdInput, forgotPassword);
 
-router.put("/resetpassword/:tokenId", resetPwdBody, resetPassword);
+router.put("/resetpassword/:tokenId", isValidateResetPwdInput, resetPassword);
 
 router.post("/removedaccount", isAuth, removedAccount);
 

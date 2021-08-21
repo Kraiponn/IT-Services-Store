@@ -1,6 +1,6 @@
 const { convertErrorValidateToObject } = require("./convertTo");
 
-const bodyValidateResult = (error) => {
+const validateBodyResults = (error) => {
   if (!error.isEmpty()) {
     // let msg = convertValidateToErrorMsg(error.array());
     const errObj = convertErrorValidateToObject(error.array());
@@ -12,4 +12,4 @@ const bodyValidateResult = (error) => {
   }
 };
 
-module.exports = bodyValidateResult;
+module.exports = { validateBodyResults };

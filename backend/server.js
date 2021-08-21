@@ -10,16 +10,18 @@ const xss = require("xss-clean");
 const hpp = require("hpp");
 const cors = require("cors");
 const morgan = require("morgan");
-const fileUpload = require("express-fileupload");
 
 const errorHandler = require("./middlewares/errorHandler");
-const connectedDB = require("./config/db");
+const connectedDB = require("./services/db");
 
 // Include routes
 const authRoutes = require("./routes/auth");
+const catRoutes = require("./routes/category");
+const prodRoutes = require("./routes/product");
 
 // Load variables config
-dotenv.config({ path: "config/app-config.env" });
+// dotenv.config({ path: "config/app-config.env" });
+dotenv.config();
 
 const app = express();
 
@@ -60,16 +62,10 @@ app.use(
   })
 );
 
-// Setting upload file
-app.use(
-  fileUpload({
-    createParentPath: true,
-    // limits: { fileSize: 1000000 },
-  })
-);
-
 // Mount rotues
 app.use("/api/v2021/auth", authRoutes);
+app.use("/api/v2021/categories", catRoutes);
+app.use("/api/v2021/products", prodRoutes);
 
 app.use(errorHandler);
 
