@@ -62,26 +62,118 @@ exports.createProduct = asyncHanler(async (req, res, next) => {
 //              /api/v2021/auth/products?select=x,xx&gt[yy]=yy
 // @access  Public
 exports.getProducts = asyncHanler(async (req, res, next) => {
-  //
+  // Make sure you will search all or by query string
+  if (req.query.search || req.query.page) {
+    searchByQueries(Product, req, res);
+  } else {
+    const product = await Product.find();
+
+    res.status(200).json({
+      success: true,
+      data: {
+        product,
+      },
+    });
+  }
 });
 
 // @desc    Get one product
-// @route   GET /api/v2021/products/:id
+// @route   GET /api/v2021/products/:productId
 // @access  Private
 exports.getProduct = asyncHanler(async (req, res, next) => {
-  //
+  const product = await Product.findById(req.params.productId);
+
+  if (!product) {
+    return next(
+      new ErrorResponse(
+        `Product not found with id of ${req.params.productId}`,
+        404
+      )
+    );
+  }
+
+  res.status(200).json({
+    success: true,
+    data: {
+      product,
+    },
+  });
 });
 
 // @desc    Update product
-// @route   PUT /api/v2021/products/:id
+// @route   PUT /api/v2021/products/:productId
 // @access  Private
 exports.updateProduct = asyncHanler(async (req, res, next) => {
-  //
+  // Validate input
+  const error = validationResult(req);
+  validateBodyResults(error);
+
+  const _id = req.params.productId;
+  const product = await Product.findById(_id);
+
+  if (!product) {
+    return next(new ErrorResponse(`Product not found with id of ${_id}`, 404));
+  }
+
+  let uploadResult;
+
+  // Remove image from cloudinary if user provided new image
+  if (req.file) {
+    // Delete old image from cloudinary
+    await cloudinary.uploader.destroy(product.image.public_id);
+
+    // Upload new image to cloudinary
+    uploadResult = await cloudinary.uploader.upload(req.file.path);
+  }
+
+  const { title, description } = req.body;
+
+  product.title = title ? title : product.title;
+  product.description = description ? description : product.description;
+
+  if (uploadResult) {
+    product.image = {
+      public_id: uploadResult.public_id,
+      secure_url: uploadResult.secure_url,
+    };
+  }
+
+  // Update new data to db
+  await product.save();
+
+  res.status(200).json({
+    success: true,
+    data: {
+      message: "Updated product is successfully.",
+      product,
+    },
+  });
 });
 
 // @desc    Delete product
-// @route   DELETE /api/v2021/products/:id
+// @route   DELETE /api/v2021/products/:productId
 // @access  Private
 exports.deleteProduct = asyncHanler(async (req, res, next) => {
-  //
+  const product = await Product.findById(req.params.productId);
+
+  if (!product) {
+    return next(
+      new ErrorResponse(
+        `Product not found with id of ${req.params.productId}`,
+        404
+      )
+    );
+  }
+
+  // Delete image on cloudinary : {result: 'OK'}
+  await cloudinary.uploader.destroy(product.image.public_id);
+
+  await product.remove();
+
+  res.status(200).json({
+    success: true,
+    data: {
+      message: "Deleted product is successfully.",
+    },
+  });
 });
