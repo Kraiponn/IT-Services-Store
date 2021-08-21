@@ -18,6 +18,7 @@ const connectedDB = require("./services/db");
 const authRoutes = require("./routes/auth");
 const catRoutes = require("./routes/category");
 const prodRoutes = require("./routes/product");
+const revRoutes = require("./routes/review");
 
 // Load variables config
 // dotenv.config({ path: "config/app-config.env" });
@@ -66,6 +67,7 @@ app.use(
 app.use("/api/v2021/auth", authRoutes);
 app.use("/api/v2021/categories", catRoutes);
 app.use("/api/v2021/products", prodRoutes);
+app.use("/api/v2021/reviews", revRoutes);
 
 app.use(errorHandler);
 

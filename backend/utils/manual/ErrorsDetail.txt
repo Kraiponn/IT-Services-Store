@@ -1,4 +1,6 @@
 
+email: kraiponn@gmail.com , john@gmail.com
+pass: admin989 , 123456
 /***************************************************/
                  UPLOAD FILE
 MulterError: File too large => File over size

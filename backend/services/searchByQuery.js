@@ -1,4 +1,7 @@
-exports.searchByQueries = async (model, req, res, populate) => {
+const FIND_BY_TITLE = "FIND_BY_TITLE";
+const FIND_BY_DESCRIPTION = "FIND_BY_DESCRIPTION";
+
+const searchByQueries = async (model, findBy, req, res, populate) => {
   // Qurey object
   const queryObj = { ...req.query };
   // console.log("QueryObj", queryObj);
@@ -7,10 +10,15 @@ exports.searchByQueries = async (model, req, res, populate) => {
 
   // Make sure it's a search by query or keyword
   if (req.query.search) {
-    query = model.find({
-      // title: new RegExp(escapeRegex(req.query.search), "gi"),
-      description: new RegExp(`.*${queryObj.search}.*`, "gim"),
-    });
+    query =
+      findBy === FIND_BY_TITLE
+        ? model.find({
+            title: new RegExp(`.*${queryObj.search}.*`, "gim"),
+          })
+        : model.find({
+            // title: new RegExp(escapeRegex(req.query.search), "gi"),
+            description: new RegExp(`.*${queryObj.search}.*`, "gim"),
+          });
   } else {
     const excludesFields = ["page", "select", "sort", "limit"];
 
@@ -87,3 +95,9 @@ exports.searchByQueries = async (model, req, res, populate) => {
 function escapeRegex(text) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 }
+
+module.exports = {
+  FIND_BY_TITLE,
+  FIND_BY_DESCRIPTION,
+  searchByQueries,
+};

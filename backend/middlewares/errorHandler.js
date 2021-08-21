@@ -30,6 +30,12 @@ const errorHandler = (err, req, res, next) => {
     error.message = `ObjectId not found or Invalid type`;
   }
 
+  if (err.name === "ReferenceError") {
+    error.statusCode = 404;
+    error.type = "Resource Not Found";
+    error.message = "Data not found";
+  }
+
   // Duplicate field value
   if (err.code === 11000) {
     error.statusCode = 400;

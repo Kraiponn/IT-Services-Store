@@ -2,13 +2,15 @@ const asyncHanler = require("express-async-handler");
 const { validationResult } = require("express-validator");
 const { cloudinary } = require("../utils/configs/fileUploadConfig");
 
-const ErrorResponse = require("../utils/ErrorResponse");
 const {
   validateBodyResults,
 } = require("../utils/validationBody/validateResults");
 
 const ErrorRespose = require("../utils/ErrorResponse");
-const { searchByQueries } = require("../services/searchByQuery");
+const {
+  searchByQueries,
+  FIND_BY_DESCRIPTION,
+} = require("../services/searchByQuery");
 const Product = require("../models/Product");
 
 // @desc    Create new product
@@ -64,7 +66,7 @@ exports.createProduct = asyncHanler(async (req, res, next) => {
 exports.getProducts = asyncHanler(async (req, res, next) => {
   // Make sure you will search all or by query string
   if (req.query.search || req.query.page) {
-    searchByQueries(Product, req, res);
+    searchByQueries(Product, FIND_BY_DESCRIPTION, req, res);
   } else {
     const product = await Product.find();
 

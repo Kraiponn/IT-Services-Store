@@ -30,37 +30,50 @@ const reviewSchema = new mongoose.Schema({
 });
 
 // Add new rating and sum to update everage in product collection
-reviewSchema.statics.getUpdateAvgRating = async function (productId) {
-  // Filter and Group for product rating
-  const obj = await this.aggregate([
-    { $match: { product: productId } },
-    {
-      $group: {
-        _id: "$product",
-        avgRating: { $avg: "$rating" },
-      },
-    },
-  ]);
-
+reviewSchema.statics.getUpdateAvgRating = async function (productId, msg) {
   try {
+    const isProducts = await this.find({ product: productId }).countDocuments();
+
+    if (!isProducts) {
+      // console.log("Remove last review for this product");
+
+      return await this.model("Product").findByIdAndUpdate(productId, {
+        avgRating: 0,
+      });
+    }
+
+    // Filter and Group for product rating
+    const obj = await this.aggregate([
+      { $match: { product: productId } },
+      {
+        $group: {
+          _id: "$product",
+          avgRating: { $avg: "$rating" },
+        },
+      },
+    ]);
+
+    // console.log(`Rating ${msg}`, obj[0].avgRating, Math.ceil(obj[0].avgRating));
+
     await this.model("Product").findByIdAndUpdate(productId, {
-      avgRating: obj[0].avgRating,
+      avgRating: Math.ceil(obj[0].avgRating),
     });
   } catch (error) {
-    console.log("Update rating error:".red.underline.bold, error);
+    console.log(
+      "Update rating to product model is error:".red.underline.bold,
+      error
+    );
   }
 };
 
 // Call get getUpdateAvgRating after save
-reviewSchema.post("save", function (next) {
-  this.constructor.getUpdateAvgRating(this.product);
-  next();
+reviewSchema.post("save", function () {
+  this.constructor.getUpdateAvgRating(this.product, "create");
 });
 
 // Call get getUpdateAvgRating after remove
-reviewSchema.pre("remove", function (next) {
-  this.constructor.getUpdateAvgRating(this.product);
-  next();
+reviewSchema.pre("remove", function () {
+  this.constructor.getUpdateAvgRating(this.product, "remove");
 });
 
 module.exports = mongoose.model("Review", reviewSchema);

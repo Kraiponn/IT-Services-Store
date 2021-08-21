@@ -8,7 +8,7 @@ const {
 } = require("../utils/validationBody/validateResults");
 
 const ErrorRespose = require("../utils/ErrorResponse");
-const { searchByQueries } = require("../services/searchByQuery");
+const { searchByQueries, FIND_BY_TITLE } = require("../services/searchByQuery");
 const Category = require("../models/Category");
 
 // @desc    Create new category
@@ -55,13 +55,13 @@ exports.createCategory = asyncHanler(async (req, res, next) => {
 });
 
 // @desc    Get categories
-// @route   GET /api/v2021/auth/categories
-//              /api/v2021/auth/categories?select=x,xx&gt[yy]=yy
+// @route   GET /api/v2021/categories
+//          GET /api/v2021/categories?select=x,xx&gt[yy]=yy
 // @access  Public
 exports.getCategories = asyncHanler(async (req, res, next) => {
   // Make sure you will search all or by query string
   if (req.query.search || req.query.page) {
-    searchByQueries(Category, req, res);
+    searchByQueries(Category, FIND_BY_TITLE, req, res);
   } else {
     const category = await Category.find();
 
