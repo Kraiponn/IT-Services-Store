@@ -4,7 +4,6 @@ const FIND_BY_DESCRIPTION = "FIND_BY_DESCRIPTION";
 const searchByQueries = async (model, findBy, req, res, populate) => {
   // Qurey object
   const queryObj = { ...req.query };
-  // console.log("QueryObj", queryObj);
 
   let query;
 
@@ -31,10 +30,11 @@ const searchByQueries = async (model, findBy, req, res, populate) => {
       (match) => `$${match}`
     );
 
-    // Finding resource
+    // Finding resources
     query = model.find(JSON.parse(queryStr));
   }
 
+  // Sorting results
   if (req.query.sort) {
     const sortBy = req.query.sort.split(",").join(" ");
     query = query.sort(sortBy);
@@ -42,6 +42,7 @@ const searchByQueries = async (model, findBy, req, res, populate) => {
     query = query.sort("-createdAt");
   }
 
+  // Selecting some fields
   if (req.query.select) {
     const fields = req.query.select.split(",").join(" ");
     query = query.select(fields);
@@ -55,7 +56,7 @@ const searchByQueries = async (model, findBy, req, res, populate) => {
   const total = await model.countDocuments();
   query = query.skip(startIndex).limit(limit);
 
-  // If have a populate fields
+  // Join fields
   if (populate) {
     for (let index = 0; index < populate.length; index++) {
       query = query.populate(populate[index]);
@@ -65,6 +66,7 @@ const searchByQueries = async (model, findBy, req, res, populate) => {
   // Created pagination field
   let pagination = {};
 
+  // Create next field
   if (lastIndex < total) {
     pagination.next = {
       page: page + 1,
@@ -72,6 +74,7 @@ const searchByQueries = async (model, findBy, req, res, populate) => {
     };
   }
 
+  // Create previous field
   if (startIndex > 0) {
     pagination.prev = {
       page: page - 1,

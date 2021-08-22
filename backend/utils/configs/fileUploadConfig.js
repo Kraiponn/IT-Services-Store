@@ -1,7 +1,7 @@
 const dotenv = require("dotenv");
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
-const ErrorRespose = require("../ErrorResponse");
+const ErrorRespose = require("../handle/ErrorResponse");
 
 // Loading environment values
 dotenv.config();

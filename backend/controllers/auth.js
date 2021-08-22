@@ -2,7 +2,7 @@ const crypto = require("crypto");
 const asyncHanler = require("express-async-handler");
 const { validationResult } = require("express-validator");
 
-const ErrorResponse = require("../utils/ErrorResponse");
+const ErrorResponse = require("../utils/handle/ErrorResponse");
 const {
   validateBodyResults,
 } = require("../utils/validationBody/validateResults");

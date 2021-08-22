@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
-const ErrorResponse = require("../utils/ErrorResponse");
+const ErrorResponse = require("../utils/handle/ErrorResponse");
 const User = require("../models/User");
 
 // Check authentication to access route

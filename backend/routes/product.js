@@ -8,7 +8,7 @@ const {
 } = require("../controllers/product");
 
 const reviewRouter = require("./review");
-// const orderRouter = require('./order')
+// const orderRouter = require("./order");
 
 const { uploader } = require("../utils/configs/fileUploadConfig");
 const { isValidInput } = require("../utils/validationBody/product");
@@ -19,7 +19,7 @@ const router = express.Router();
 
 // Re-routes into other resources
 router.use("/:productId/reviews", reviewRouter);
-// router.use("/:productId");
+// router.use("/:productId/orders", orderRouter);
 
 router
   .route("/")

@@ -5,7 +5,7 @@ const {
   validateBodyResults,
 } = require("../utils/validationBody/validateResults");
 
-const ErrorRespose = require("../utils/ErrorResponse");
+const ErrorResponse = require("../utils/handle/ErrorResponse");
 const { searchByQueries, FIND_BY_TITLE } = require("../services/searchByQuery");
 
 const Review = require("../models/Review");

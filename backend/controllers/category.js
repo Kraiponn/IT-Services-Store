@@ -2,12 +2,12 @@ const asyncHanler = require("express-async-handler");
 const { validationResult } = require("express-validator");
 const { cloudinary } = require("../utils/configs/fileUploadConfig");
 
-const ErrorResponse = require("../utils/ErrorResponse");
+const ErrorResponse = require("../utils/handle/ErrorResponse");
 const {
   validateBodyResults,
 } = require("../utils/validationBody/validateResults");
 
-const ErrorRespose = require("../utils/ErrorResponse");
+const ErrorRespose = require("../utils/handle/ErrorResponse");
 const { searchByQueries, FIND_BY_TITLE } = require("../services/searchByQuery");
 const Category = require("../models/Category");
 
@@ -75,7 +75,7 @@ exports.getCategories = asyncHanler(async (req, res, next) => {
 });
 
 // @desc    Get one category
-// @route   GET /api/v2021/auth/categories/:id
+// @route   GET /api/v2021/categories/:id
 // @access  Private
 exports.getCategory = asyncHanler(async (req, res, next) => {
   const category = await Category.findById(req.params.id);
@@ -95,7 +95,7 @@ exports.getCategory = asyncHanler(async (req, res, next) => {
 });
 
 // @desc    Update category
-// @route   PUT /api/v2021/auth/categories/:id
+// @route   PUT /api/v2021/categories/:id
 // @access  Private
 exports.updateCategory = asyncHanler(async (req, res, next) => {
   // Validate input
@@ -147,7 +147,7 @@ exports.updateCategory = asyncHanler(async (req, res, next) => {
 });
 
 // @desc    Delete category
-// @route   DELETE /api/v2021/auth/categories/:id
+// @route   DELETE /api/v2021/categories/:id
 // @access  Private
 exports.deleteCategory = asyncHanler(async (req, res, next) => {
   const category = await Category.findById(req.params.id);

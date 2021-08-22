@@ -5,7 +5,9 @@ pass: admin989 , 123456
                  UPLOAD FILE
 MulterError: File too large => File over size
 
-/***************************************************/
+
+/*************************************************************************/
+              ObjectId Or Type is incorrects 
 
 CastError: Cast to ObjectId failed for value "611faaca8dc6cc6bc4e7185b2" (type string) at path "_id" for model "Category"
     at model.Query.exec (D:\MyWork\Projects\Web\FullStack\WorkShop 2021\furniture-02\backend\node_modules\mongoose\lib\query.js:4498:21)
@@ -33,3 +35,21 @@ CastError: Cast to ObjectId failed for value "611faaca8dc6cc6bc4e7185b2" (type s
       at processTicksAndRejections (internal/process/task_queues.js:75:11),
   valueType: 'string'
 }
+
+/*************************************************************************/
+                     Invalid input type in enum field (On Database)
+
+Error example::
+
+  {
+    "success": false,
+    "errorDetail": {
+        "type": "Invalid validation",
+        "message": [
+            "`xxx-filed` is not a valid enum value for path `status`."
+        ]
+    }
+  }
+
+/*************************************************************************/
+ 

@@ -1,18 +1,24 @@
 const mongoose = require("mongoose");
 
+const ORDER_PENDING_STATE = "PENDING";
+const ORDER_RECEIVE_STATE = "RECEIVED";
+const ORDER_SHIPPING_STATE = "SHIPPING";
+const ORDER_SUCCESS_STATE = "SUCCESS";
+const ORDER_CANCEL_STATE = "CANCEL";
+
 const orderSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    requried: [true, "Please provided a review user"],
+    requried: [true, "Please provided an owner order"],
   },
   products: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "Product",
-    requried: [true, "Please provided a product"],
+    requried: [true, "Please provided a product order"],
   },
   amount: {
-    total: {
+    quantity: {
       type: Number,
       default: 0,
     },
@@ -23,9 +29,28 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["order", "shipping", "success", "cancel"],
-    default: "order",
+    enum: [
+      ORDER_PENDING_STATE,
+      ORDER_RECEIVE_STATE,
+      ORDER_SHIPPING_STATE,
+      ORDER_SUCCESS_STATE,
+      ORDER_CANCEL_STATE,
+    ],
+    default: ORDER_PENDING_STATE,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
-module.exports = mongoose.model("Order", orderSchema);
+const Order = mongoose.model("Order", orderSchema);
+
+module.exports = {
+  Order,
+  ORDER_PENDING_STATE,
+  ORDER_RECEIVE_STATE,
+  ORDER_SHIPPING_STATE,
+  ORDER_SUCCESS_STATE,
+  ORDER_CANCEL_STATE,
+};

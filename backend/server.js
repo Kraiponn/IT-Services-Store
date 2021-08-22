@@ -19,6 +19,7 @@ const authRoutes = require("./routes/auth");
 const catRoutes = require("./routes/category");
 const prodRoutes = require("./routes/product");
 const revRoutes = require("./routes/review");
+const ordRoutes = require("./routes/order");
 
 // Load variables config
 // dotenv.config({ path: "config/app-config.env" });
@@ -68,6 +69,7 @@ app.use("/api/v2021/auth", authRoutes);
 app.use("/api/v2021/categories", catRoutes);
 app.use("/api/v2021/products", prodRoutes);
 app.use("/api/v2021/reviews", revRoutes);
+app.use("/api/v2021/orders", ordRoutes);
 
 app.use(errorHandler);
 

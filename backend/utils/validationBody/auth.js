@@ -1,5 +1,5 @@
 const { body } = require("express-validator");
-const ErrorResponse = require("../ErrorResponse");
+const ErrorResponse = require("../handle/ErrorResponse");
 
 const isValidateRegisInput = [
   body("username").notEmpty().withMessage("Please provide a username"),

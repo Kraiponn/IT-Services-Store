@@ -6,7 +6,7 @@ const {
   validateBodyResults,
 } = require("../utils/validationBody/validateResults");
 
-const ErrorRespose = require("../utils/ErrorResponse");
+const ErrorResponse = require("../utils/handle/ErrorResponse");
 const {
   searchByQueries,
   FIND_BY_DESCRIPTION,
@@ -23,7 +23,7 @@ exports.createProduct = asyncHanler(async (req, res, next) => {
 
   // Make sure user must upload image
   if (!req.file) {
-    return next(new ErrorRespose(`Please upload an image`, 400));
+    return next(new ErrorResponse(`Please upload an image`, 400));
   }
 
   // console.log(req.file);
@@ -60,8 +60,8 @@ exports.createProduct = asyncHanler(async (req, res, next) => {
 });
 
 // @desc    Get products
-// @route   GET /api/v2021/auth/products
-//              /api/v2021/auth/products?select=x,xx&gt[yy]=yy
+// @route   GET /api/v2021/products
+//              /api/v2021/products?select=x,xx&gt[yy]=yy
 // @access  Public
 exports.getProducts = asyncHanler(async (req, res, next) => {
   // Make sure you will search all or by query string
